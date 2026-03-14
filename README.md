@@ -1,19 +1,20 @@
 # 🎵 AI Lyrics Explainer
 
-> **Decode any song's hidden meaning using Google Gemini AI.**  
-> A full-stack web application with AI-powered lyric analysis, user authentication, public feed, and search.
+> **Decode any song's hidden meaning using AI.**  
+> A full-stack web application with AI-powered lyric analysis, user authentication, public feed, and search. Features a robust **Multi-AI Fallback Architecture** utilizing Google Gemini and OpenRouter (Claude-3-Haiku).
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org)
 [![Express](https://img.shields.io/badge/Express-4.x-blue)](https://expressjs.com)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://mongodb.com)
-[![Gemini AI](https://img.shields.io/badge/Gemini-1.5_Flash-orange)](https://ai.google.dev)
+[![Gemini API](https://img.shields.io/badge/Google-Gemini-orange)](https://ai.google.dev)
+[![OpenRouter](https://img.shields.io/badge/OpenRouter-Claude_3-purple)](https://openrouter.ai)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ---
 
 ## 🌟 Features
 
-- 🤖 **AI Analysis** — Powered by Google Gemini 2.5 Flash
+- 🤖 **Multi-AI Fallback Architecture** — Primary analysis powered by Google Gemini (1.5 Flash), with seamless automatic fallback to Claude-3-Haiku via OpenRouter ensuring 100% uptime against quota limits.
 - 🎭 **5-Layer Breakdown** — Theme, Emotional Tone, Verse Breakdown, Hidden Meaning, Overall Message
 - 🔐 **JWT Authentication** — Secure signup/login with bcrypt password hashing
 - 💾 **Save Analyses** — Store decoded songs in MongoDB
@@ -38,7 +39,7 @@
 | Frontend | HTML, CSS (Glassmorphism), Vanilla JavaScript |
 | Backend | Node.js, Express.js |
 | Database | MongoDB, Mongoose |
-| AI | Google Gemini 2.5 Flash |
+| AI Pipeline | `gemini-1.5-flash` natively & `anthropic/claude-3-haiku` via OpenRouter (using Axios) |
 | Auth | JWT + bcrypt |
 | Deployment | Render (backend), Vercel (frontend) |
 
@@ -63,7 +64,7 @@ ai-lyrics-explainer/
 │   │   ├── authRoutes.js        # /api/auth/*
 │   │   └── lyricsRoutes.js      # /api/lyrics/*
 │   ├── services/
-│   │   └── geminiService.js     # Google Gemini integration
+│   │   └── aiService.js         # Multi-AI engine orchestrator (Gemini & OpenRouter)
 │   ├── server.js                # Express entry point
 │   ├── package.json
 │   └── .env.example
@@ -107,11 +108,15 @@ npm install
 5. Click **Connect** → **Compass** → Copy the connection string  
    Example: `mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/`
 
-### 4. Google Gemini API Key Setup
+### 4. API Keys Setup (Gemini & OpenRouter)
 
-1. Go to [ai.google.dev](https://ai.google.dev) and sign in
-2. Click **Get API Key** → **Create API Key**
-3. Copy your key
+**Gemini API:**
+1. Go to [ai.google.dev](https://ai.google.dev) and sign in.
+2. Click **Get API Key** → **Create API Key** and copy it.
+
+**OpenRouter API (Fallback System):**
+1. Go to [openrouter.ai](https://openrouter.ai) and sign in.
+2. Generate an API Key in the settings panel and copy it.
 
 ### 5. Configure Environment Variables
 
@@ -127,6 +132,7 @@ MONGO_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/ai-lyrics-e
 JWT_SECRET=your_super_secret_jwt_key_minimum_32_chars
 JWT_EXPIRES_IN=7d
 GEMINI_API_KEY=your_gemini_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
@@ -306,7 +312,7 @@ Get the authenticated user's saved explanations.
    - **Build command:** `npm install`
    - **Start command:** `npm start`
 5. Add Environment Variables (same as `.env`):
-   - `MONGO_URI`, `JWT_SECRET`, `GEMINI_API_KEY`, `NODE_ENV=production`
+   - `MONGO_URI`, `JWT_SECRET`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NODE_ENV=production`
    - `FRONTEND_URL=https://your-frontend.vercel.app`
 6. Deploy! Your API URL will be `https://your-app.onrender.com`
 
