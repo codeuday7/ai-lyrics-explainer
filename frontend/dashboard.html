@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – AI Lyrics Explainer</title>
+  <meta name="description" content="Analyze song lyrics with AI. Get theme, emotional tone, hidden meaning, and verse-by-verse breakdown." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="app-page">
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Sidebar Nav -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-logo">
+        <span class="logo-icon">🎵</span>
+        <span class="logo-text">LyricsAI</span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+    </div>
+    <div class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link active">
+        <span>🎛</span> Dashboard
+      </a>
+      <a href="feed.html" class="sidebar-link">
+        <span>🌐</span> Public Feed
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div>
+          <p class="user-name" id="userName">Loading...</p>
+          <p class="user-email" id="userEmail"></p>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm logout-btn" id="logoutBtn" onclick="logout()">🚪 Logout</button>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="hamburger" id="sidebarToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-logo">🎵 LyricsAI</div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">🚪</button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Analyze Lyrics <span class="gradient-text">✨</span></h1>
+      <p class="page-subtitle">Paste lyrics or enter a song name and let AI decode its meaning</p>
+    </div>
+
+    <!-- Analyzer Card -->
+    <div class="analyzer-card glass-card">
+      <div class="analyzer-form">
+        <!-- Song Info Row -->
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="songName">Song Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🎵</span>
+              <input type="text" id="songName" placeholder="e.g. Bohemian Rhapsody" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="artist">Artist / Band</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🎤</span>
+              <input type="text" id="artist" placeholder="e.g. Queen" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="movieName">Movie Name (Optional)</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🎬</span>
+              <input type="text" id="movieName" placeholder="e.g. Wayne's World" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="releaseDate">Release Date (Optional)</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📅</span>
+              <input type="text" id="releaseDate" placeholder="e.g. 1975" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Lyrics Area -->
+        <div class="form-group">
+          <label for="lyricsInput">
+            Lyrics
+            <span class="char-counter" id="charCounter">0 / 5000</span>
+          </label>
+          <textarea
+            id="lyricsInput"
+            class="lyrics-textarea"
+            placeholder="Paste your lyrics here... (min. 20 characters)"
+            maxlength="5000"
+            rows="10"
+          ></textarea>
+          <div id="lyricsError" class="validation-error">Please enter at least 20 characters of lyrics.</div>
+          <div class="textarea-actions">
+            <button class="btn btn-ghost btn-sm" onclick="clearLyrics()" title="Clear">🗑 Clear</button>
+            <button class="btn btn-ghost btn-sm" onclick="pasteLyrics()" title="Paste from clipboard">📋 Paste</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button class="btn btn-primary btn-lg" id="analyzeBtn" onclick="analyzeLyrics()" data-tooltip="Use AI to decode lyrics">
+            <span class="btn-text">🔍 Analyze Lyrics</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+          <div class="visibility-toggle">
+            <label class="toggle-label">
+              <input type="checkbox" id="isPublic" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">Make Public</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Searches -->
+      <div id="recentSearches" class="recent-searches hidden">
+        <h4 class="recent-title">Jump Back In</h4>
+        <div id="recentSearchesList" class="recent-pills"></div>
+      </div>
+
+    </div>
+
+    <!-- Results Split View Container (will encapsulate analysis if on desktop) -->
+    <div id="resultsContainer" class="">
+
+    <!-- Loading Overlay (Replaced by Skeletons in Phase 2) -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loading-card glass-card">
+        <div class="music-bars">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="loading-text">AI is analyzing your lyrics...</p>
+        <div class="status-text-carousel">
+          <div class="status-text-item active" id="statusText">Reading the lyrics...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic AI Loader (New Loading State) -->
+    <div id="skeletonLoader" class="results-section hidden">
+      <div class="ai-loader-container glass-card">
+        <div class="orb-loader"></div>
+        <div class="status-text-carousel">
+          <div class="status-text-item active ai-gradient-text" id="statusText">Tuning the AI engine...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="results-section hidden">
+      <div class="export-branding">
+        <span class="logo-icon">🎵</span> LyricsAI
+      </div>
+      <div class="results-header">
+        <h2 class="results-title">
+          <span id="resultSongName">Song</span>
+          <span class="results-artist" id="resultArtist"></span>
+        </h2>
+        <div class="results-actions" data-html2canvas-ignore>
+          <button class="btn btn-ghost btn-sm" id="exportBtn" onclick="exportToImage()" data-tooltip="Export Image">📸 Export</button>
+          <button class="btn btn-ghost btn-sm" id="copyBtn" onclick="copyExplanation()" data-tooltip="Copy entire analysis">📋 Copy</button>
+          <button class="btn btn-ghost btn-sm" id="shareBtn" onclick="shareExplanation()" data-tooltip="Share link">🔗 Share</button>
+          <button class="btn btn-primary btn-sm" id="saveBtn" onclick="saveExplanation()" data-tooltip="Save to your library">💾 Save</button>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <!-- Theme -->
+        <details class="result-card glass-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon">🎭</span>
+            <span class="result-label">Theme</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="themeResult"></p>
+          </div>
+        </details>
+
+        <!-- Emotional Tone -->
+        <details class="result-card glass-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon">💜</span>
+            <span class="result-label">Emotional Tone</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="toneResult"></p>
+          </div>
+        </details>
+
+        <!-- Verse Breakdown -->
+        <details class="result-card glass-card result-card-wide" open>
+          <summary class="result-card-header">
+            <span class="result-icon">📜</span>
+            <span class="result-label">Verse-by-Verse Breakdown</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <div id="verseBreakdownResult" class="verse-list"></div>
+          </div>
+        </details>
+
+        <!-- Hidden Meaning -->
+        <details class="result-card glass-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon">🔍</span>
+            <span class="result-label">Hidden Meaning</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="hiddenMeaningResult"></p>
+          </div>
+        </details>
+
+        <!-- Overall Message -->
+        <details class="result-card glass-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon">💌</span>
+            <span class="result-label">Overall Message</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="overallMessageResult"></p>
+          </div>
+        </details>
+
+        <!-- Cultural Context -->
+        <details class="result-card glass-card premium-insight-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon accent-purple">🌍</span>
+            <span class="result-label premium-title">Cultural Context</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="culturalContextResult"></p>
+          </div>
+        </details>
+
+        <!-- The Aha! Insight -->
+        <details class="result-card glass-card premium-insight-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon accent-gold">💡</span>
+            <span class="result-label premium-title">The "Aha!" Insight</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="ahaInsightResult"></p>
+          </div>
+        </details>
+      </div>
+
+      <!-- AI Provider Label -->
+      <div class="ai-provider-label" style="font-size: 12px; color: #888; margin-top: 24px; text-align: right; padding-right: 16px;">
+        Generated by: <strong id="aiProviderResult" style="color: #a3a3a3;"></strong>
+      </div>
+    </div>
+
+    </div> <!-- Close resultsContainer -->
+  </main>
+
+  <!-- Sidebar overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script src="node_modules/html2canvas/dist/html2canvas.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

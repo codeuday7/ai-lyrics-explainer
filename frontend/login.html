@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – AI Lyrics Explainer</title>
+  <meta name="description" content="Login or create an account to start analyzing song lyrics with AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="auth-page">
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <div class="auth-container">
+    <div class="auth-split-wrapper">
+      <!-- Left Column (Marketing) -->
+      <div class="auth-marketing-col">
+        <!-- Logo -->
+        <a href="index.html" class="auth-logo">
+          <span class="logo-icon">🎵</span>
+          <span class="logo-text">LyricsAI</span>
+        </a>
+        <h1 class="marketing-title">Decode the soul of every lyric.</h1>
+        <p class="marketing-subtitle">AI explains what the artist actually meant. Paste lyrics, get rich insights, and
+          save your favorites.</p>
+      </div>
+
+      <!-- Right Column (Card) -->
+      <div class="auth-card glass-card">
+
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button class="tab-btn active" id="loginTab" onclick="showTab('login')">Login</button>
+          <button class="tab-btn" id="signupTab" onclick="showTab('signup')">Sign Up</button>
+          <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+          <h2 class="form-title">Welcome back 👋</h2>
+          <p class="form-subtitle">Sign in to continue analyzing music</p>
+
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📧</span>
+              <input type="email" id="loginEmail" placeholder="your@email.com" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="loginPassword" placeholder="••••••••" required
+                autocomplete="current-password" />
+              <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)"
+                aria-label="Toggle password" data-tooltip="Show/Hide">👁</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="showTab('signup')">Sign Up</a></p>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signupForm" class="auth-form hidden" onsubmit="handleSignup(event)">
+          <h2 class="form-title">Create account 🎶</h2>
+          <p class="form-subtitle">Start decoding music in seconds</p>
+
+          <div class="form-group">
+            <label for="signupUsername">Username</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="signupUsername" placeholder="musiclover123" required minlength="3"
+                autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📧</span>
+              <input type="email" id="signupEmail" placeholder="your@email.com" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="signupPassword" placeholder="Min. 6 characters" required minlength="6"
+                autocomplete="new-password" />
+              <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)"
+                aria-label="Toggle password" data-tooltip="Show/Hide">👁</button>
+            </div>
+            <div class="password-strength" id="passwordStrength"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="signupBtn">
+            <span class="btn-text">Create Account</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+
+          <p class="auth-switch">Already have an account? <a href="#" onclick="showTab('login')">Sign In</a></p>
+        </form>
+
+      </div><!-- /auth-card -->
+    </div><!-- /auth-split-wrapper -->
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // If user is already logged in, keep them in landing/dashboard path
+    if (localStorage.getItem('token')) {
+      window.location.href = 'index.html';
+    }
+
+    // Auto-switch to signup tab if URL contains #signup
+    if (window.location.hash === '#signup') showTab('signup');
+  </script>
+</body>
+
+</html>

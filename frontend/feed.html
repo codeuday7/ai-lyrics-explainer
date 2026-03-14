@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Public Feed – AI Lyrics Explainer</title>
+  <meta name="description" content="Browse AI-analyzed song explanations shared by the community." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="app-page">
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-logo">
+        <span class="logo-icon">🎵</span>
+        <span class="logo-text">LyricsAI</span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+    </div>
+    <div class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🎛</span> Dashboard
+      </a>
+      <a href="feed.html" class="sidebar-link active">
+        <span>🌐</span> Public Feed
+      </a>
+    </div>
+    <div class="sidebar-footer" id="sidebarFooter">
+      <!-- filled by JS -->
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="hamburger" id="sidebarToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-logo">🎵 LyricsAI</div>
+    <a href="login.html" class="btn btn-primary btn-sm" id="loginBtnMobile">Login</a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <div class="page-header">
+      <h1 class="page-title">Public Feed <span class="gradient-text">🌐</span></h1>
+      <p class="page-subtitle">Discover AI-decoded songs shared by the community</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <div class="search-bar glass-card">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search by song name or artist..."
+          oninput="debounceSearch(this.value)"
+        />
+        <button class="btn btn-primary btn-sm" onclick="search()">Search</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearSearch()" id="clearSearchBtn" style="display:none">✕</button>
+      </div>
+    </div>
+
+    <!-- Trending / Stats strip -->
+    <div class="feed-stats glass-card">
+      <div class="feed-stat">
+        <span id="totalCount" class="feed-stat-num">...</span>
+        <span class="feed-stat-label">Total Analyses</span>
+      </div>
+      <div class="feed-stat-divider"></div>
+      <div class="feed-stat">
+        <span class="feed-stat-num">🔥</span>
+        <span class="feed-stat-label">Trending Now</span>
+      </div>
+      <div class="feed-stat-divider"></div>
+      <div class="feed-stat">
+        <span class="feed-stat-num">🌍</span>
+        <span class="feed-stat-label">Community Powered</span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="feedLoading" class="feed-loading">
+      <div class="music-bars">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p>Loading feed...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="empty-state hidden">
+      <svg class="empty-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" stroke="var(--accent-purple)"></circle>
+        <circle cx="12" cy="12" r="3" stroke="var(--accent-pink)"></circle>
+        <line x1="12" y1="9" x2="12" y2="15" stroke="var(--text-secondary)"></line>
+        <line x1="15" y1="12" x2="12" y2="12" stroke="var(--text-secondary)"></line>
+        <path d="M12 12 l 4 -4" stroke="var(--accent-cyan)"></path>
+        <path d="M12 2 a 10 10 0 0 1 10 10" stroke="var(--text-muted)" stroke-dasharray="2 4"></path>
+      </svg>
+      <h3>No songs found</h3>
+      <p id="emptyMessage">Be the first to analyze a song!</p>
+      <a href="dashboard.html" class="btn btn-primary">Analyze a Song</a>
+    </div>
+
+    <!-- Feed Grid -->
+    <div class="feed-grid" id="feedGrid"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <!-- Song Detail Modal -->
+  <div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+    <div class="modal glass-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/feed.js"></script>
+</body>
+</html>
