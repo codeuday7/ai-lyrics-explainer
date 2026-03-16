@@ -15,12 +15,14 @@
 ## 🌟 Features
 
 - 🤖 **Multi-AI Fallback Architecture** — Primary analysis powered by Google Gemini (1.5 Flash), with seamless automatic fallback to Claude-3-Haiku via OpenRouter ensuring 100% uptime against quota limits.
-- 🎭 **5-Layer AI Analysis Breakdown**
+- 🎭 **7-Layer AI Analysis Breakdown**
   1. **Theme** — Core narrative and central concept
   2. **Emotional Tone** — Mood, atmosphere, and emotional progression
   3. **Verse Breakdown** — Line-by-line analysis of key sections
   4. **Hidden Meaning** — Metaphors, symbolism, and deeper interpretations
   5. **Overall Message** — Primary takeaway and artistic intent
+  6. **Cultural Context** — Historical, social, and cultural references and influences
+  7. **Aha Moment** — Key insight or breakthrough moment in understanding the song
 - 🌍 **Multilanguage Support** — Analyze & translate lyrics in 40+ languages (Hindi, Spanish, French, Arabic, Japanese, Korean, Chinese, and more)
 - 🌐 **Automatic Language Detection** — AI-powered language identification
 - 🔐 **JWT Authentication** — Secure signup/login with bcrypt password hashing
@@ -33,9 +35,9 @@
 
 ---
 
-## 🎭 5-Layer AI Analysis Breakdown
+## 🎭 7-Layer AI Analysis Breakdown
 
-Each analysis is structured in 5 dimensions for comprehensive lyric understanding:
+Each analysis is structured in 7 dimensions for comprehensive lyric understanding:
 
 | Layer | Purpose | Example |
 |-------|---------|---------|
@@ -44,6 +46,8 @@ Each analysis is structured in 5 dimensions for comprehensive lyric understandin
 | **Verse Breakdown** | Line-by-line interpretation of key sections | "Opening verse establishes the protagonist's struggle..." |
 | **Hidden Meaning** | Uncovers metaphors, symbolism, and deeper layers | "The rain symbolizes emotional cleansing and rebirth" |
 | **Overall Message** | Synthesizes the artist's primary intent | "A meditation on resilience and self-acceptance" |
+| **Cultural Context** | Explores historical, social, and cultural influences | "References 1960s civil rights movement and generational conflict" |
+| **Aha Moment** | Highlights the key insight or breakthrough understanding | "Realizes the song is actually about self-acceptance, not romantic love" |
 
 ---
 
@@ -67,7 +71,7 @@ Analyze and understand lyrics in **40+ supported languages**:
 ## 📋 Recent Updates
 
 ### Version 1.0.0 - March 2026
-- ✨ **New:** Comprehensive 5-layer AI analysis breakdown
+- ✨ **New:** Comprehensive 7-layer AI analysis breakdown (Theme, Emotional Tone, Verse Breakdown, Hidden Meaning, Overall Message, Cultural Context, Aha Moment)
 - ✨ **New:** Multilanguage support with 40+ languages
 - ✨ **New:** Intelligent language detection for incoming lyrics
 - ✨ **New:** Translation API integration
