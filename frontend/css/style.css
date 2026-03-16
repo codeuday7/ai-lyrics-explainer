@@ -845,6 +845,7 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
+
 input[type="password"]::-webkit-credentials-auto-fill-button,
 input[type="password"]::-webkit-strong-password-auto-fill-button {
   display: none !important;
@@ -1831,14 +1832,31 @@ input[type="password"]::-webkit-strong-password-auto-fill-button {
 }
 
 @keyframes orbPulse {
-  0%, 100% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.15); filter: brightness(1.2); }
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+    filter: brightness(1.2);
+  }
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .ai-gradient-text {
@@ -1854,8 +1872,16 @@ input[type="password"]::-webkit-strong-password-auto-fill-button {
 }
 
 @keyframes textPulse {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; text-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
+
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
+  }
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
@@ -2639,12 +2665,12 @@ input[type="password"]::-webkit-strong-password-auto-fill-button {
 }
 
 .auth-card.glass-card {
-  display: block !important;
-  width: 100% !important;
-  max-width: 420px !important;
+  display: block;
+  width: 100%;
+  max-width: 420px;
   min-height: 400px;
   flex-shrink: 0;
-  padding: 40px !important;
+  padding: 40px;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(24px) saturate(200%);
@@ -2830,7 +2856,8 @@ input[type='password']::-webkit-credentials-auto-fill-button {
   color: white;
   transition: background 0.2s, border-color 0.2s;
   cursor: pointer;
-  margin: 0; /* Clear any previous margins */
+  margin: 0;
+  /* Clear any previous margins */
   box-sizing: border-box;
 }
 
@@ -2918,10 +2945,25 @@ input[type='password']::-webkit-credentials-auto-fill-button {
   }
 
   .auth-card.glass-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 2rem !important;
+    width: 90% !important;
+    max-width: 90% !important;
+    padding: 1.5rem !important;
     min-height: unset;
+  }
+
+  .form-title {
+    font-size: 1.9rem;
+  }
+
+  .auth-switch {
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    margin-top: 14px;
+  }
+
+  .auth-switch a {
+    white-space: nowrap;
   }
 
   .auth-marketing-col {
