@@ -7,11 +7,13 @@ const {
   getFeed,
   searchExplanations,
   getMyExplanations,
+  getLanguages,
 } = require('../controllers/lyricsController');
 
 // Public routes
 router.get('/feed', getFeed);
 router.get('/search', searchExplanations);
+router.get('/languages', getLanguages);
 
 // Protected routes
 router.post('/analyze', protect, analyze);

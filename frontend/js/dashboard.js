@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Load languages and initialize Tom Select (Multilingual)
+  loadLanguages();
+
   // Load recent searches
   loadRecentSearches();
 });
@@ -48,6 +51,61 @@ function closeSidebar() {
   document.getElementById('sidebar')?.classList.remove('open');
   document.getElementById('sidebarOverlay')?.classList.remove('active');
   document.body.style.overflow = '';
+}
+
+/* ─── Load and Initialize Languages (Multilingual) ─────────────────────── */
+async function loadLanguages() {
+  try {
+    const res = await fetch(`${API_BASE}/lyrics/languages`);
+    const data = await res.json();
+    
+    if (!res.ok || !data.success) throw new Error('Failed to load languages');
+    
+    const languages = data.data;
+    const select = document.getElementById('explanationLanguage');
+    if (!select) return;
+    
+    // Clear existing options except placeholder
+    select.innerHTML = '<option value="">Choose a language...</option>';
+    
+    // Add languages
+    languages.forEach(lang => {
+      const option = document.createElement('option');
+      option.value = lang.name;
+      option.textContent = lang.name;
+      select.appendChild(option);
+    });
+    
+    // Set default to English
+    select.value = 'English';
+    
+    // Initialize Tom Select on the dropdown
+    if (window.TomSelect) {
+      new TomSelect(select, {
+        create: false,
+        placeholder: 'Select explanation language...',
+        searchField: ['text'],  // Search by language name
+        maxItems: 1,
+        hideSelected: true,
+        closeAfterSelect: true,
+      });
+    }
+  } catch (err) {
+    console.error('[Language Loader] Error:', err.message);
+    // Fallback: still show languages without Tom Select
+    const select = document.getElementById('explanationLanguage');
+    if (select) {
+      const defaultLanguages = ['English', 'Hindi', 'Telugu', 'Tamil', 'Spanish', 'French', 'German'];
+      select.innerHTML = '<option value="">Choose a language...</option>';
+      defaultLanguages.forEach(lang => {
+        const option = document.createElement('option');
+        option.value = lang;
+        option.textContent = lang;
+        select.appendChild(option);
+      });
+      select.value = 'English';
+    }
+  }
 }
 
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
@@ -76,6 +134,7 @@ async function analyzeLyrics() {
   const artist = document.getElementById('artist')?.value.trim();
   const movieName = document.getElementById('movieName')?.value.trim();
   const releaseDate = document.getElementById('releaseDate')?.value.trim();
+  const explanationLanguage = document.getElementById('explanationLanguage')?.value || 'English';
 
   // Inject metadata into songName for the AI prompt without changing backend
   if (movieName || releaseDate) {
@@ -115,7 +174,7 @@ async function analyzeLyrics() {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({ lyrics, songName, artist }),
+      body: JSON.stringify({ lyrics, songName, artist, explanationLanguage }),
     });
 
     const data = await res.json();
@@ -125,7 +184,7 @@ async function analyzeLyrics() {
       throw new Error(data.message || 'Analysis failed.');
     }
 
-    currentAnalysis = { lyrics, songName, artist, provider: data.provider, ...data.data };
+    currentAnalysis = { lyrics, songName, artist, explanationLanguage, provider: data.provider, ...data.data };
     saveRecentSearch(songName, artist);
     renderResults(currentAnalysis);
     showToast('Analysis complete! 🎶', 'success');
@@ -154,6 +213,21 @@ function renderResults(data) {
     artistEl.textContent = data.artist && data.artist !== 'Unknown Artist' ? `by ${data.artist}` : '';
   }
 
+  // Detected Language (NEW: Multilingual)
+  const detectedLangEl = document.getElementById('detectedLanguageResult');
+  if (detectedLangEl) {
+    const langCode = data.detected_language_code || 'unknown';
+    const langName = data.detected_language || 'Unknown';
+    detectedLangEl.innerHTML = `<strong>${langName}</strong> <span style="color: #888; font-size: 13px;">(${langCode})</span>`;
+  }
+
+  // Translated Lyrics (NEW: Multilingual)
+  const translatedEl = document.getElementById('translatedLyricsResult');
+  if (translatedEl) {
+    const translated = data.translated_lyrics || data.lyrics || 'No translation available';
+    translatedEl.textContent = translated;
+  }
+
   // Use typewriter effect for text
   typewriterEffect(document.getElementById('themeResult'), data.theme || 'N/A');
   typewriterEffect(document.getElementById('hiddenMeaningResult'), data.hiddenMeaning || 'N/A');
@@ -165,6 +239,25 @@ function renderResults(data) {
   const providerEl = document.getElementById('aiProviderResult');
   if (providerEl) {
     providerEl.textContent = data.provider || 'Unknown';
+  }
+
+  // Set Explanation Language (NEW: Multilingual)
+  const explanationLangEl = document.getElementById('detectedLanguageResult')?.parentElement?.querySelector('.result-card-header');
+  // Note: This displays in the detected language section; actual explanation is in specific fields
+
+  // Line By Line Explanation (NEW: Multilingual)
+  const lineByLineEl = document.getElementById('lineByLineResult');
+  if (lineByLineEl && data.line_by_line_explanation && Array.isArray(data.line_by_line_explanation)) {
+    lineByLineEl.innerHTML = '';
+    data.line_by_line_explanation.forEach((item, idx) => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'line-by-line-item';
+      itemEl.innerHTML = `
+        <div class="line-text"><strong>${item.line}</strong></div>
+        <div class="line-explanation">${item.explanation}</div>
+      `;
+      lineByLineEl.appendChild(itemEl);
+    });
   }
 
   // Process lyrics into interactive line-by-line breakdown
@@ -278,13 +371,26 @@ async function saveExplanation() {
   saveBtn.textContent = '💾 Saving...';
 
   try {
+    // Extract multilingual fields from current analysis (NEW: Multilingual)
+    const saveData = {
+      ...currentAnalysis,
+      isPublic,
+      // Multilingual fields
+      detectedLanguage: currentAnalysis.detected_language || 'Unknown',
+      detectedLanguageCode: currentAnalysis.detected_language_code || 'unknown',
+      translatedLyrics: currentAnalysis.translated_lyrics || null,
+      explanationLanguage: currentAnalysis.explanationLanguage || 'English',
+      explanationLanguageCode: 'en', // Will be set properly when language service is extended
+      lineByLineExplanation: currentAnalysis.line_by_line_explanation || [],
+    };
+
     const res = await fetch(`${API_BASE}/lyrics/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({ ...currentAnalysis, isPublic }),
+      body: JSON.stringify(saveData),
     });
 
     const data = await res.json();

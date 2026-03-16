@@ -51,6 +51,40 @@ const explanationSchema = new mongoose.Schema(
       required: true,
       default: 'No insight provided.',
     },
+    // Multilingual fields
+    originalLyrics: {
+      type: String,
+      default: null,
+    },
+    detectedLanguage: {
+      type: String,
+      default: 'English',
+    },
+    detectedLanguageCode: {
+      type: String,
+      default: 'en',
+    },
+    translatedLyrics: {
+      type: String,
+      default: null,
+    },
+    explanationLanguage: {
+      type: String,
+      default: 'English',
+    },
+    explanationLanguageCode: {
+      type: String,
+      default: 'en',
+    },
+    lineByLineExplanation: {
+      type: [
+        {
+          line: String,
+          explanation: String,
+        },
+      ],
+      default: [],
+    },
     isPublic: {
       type: Boolean,
       default: true,

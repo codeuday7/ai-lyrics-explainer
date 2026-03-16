@@ -1,12 +1,13 @@
 const Explanation = require('../models/Explanation');
 const { analyzeLyrics } = require('../services/aiService');
+const { getSupportedLanguages, isLanguageSupported } = require('../services/languageService');
 
-// @desc  Analyze lyrics via Gemini AI
+// @desc  Analyze lyrics via Gemini AI (Multilingual)
 // @route POST /api/lyrics/analyze
 // @access Protected
 const analyze = async (req, res) => {
   try {
-    const { lyrics, songName, artist } = req.body;
+    const { lyrics, songName, artist, explanationLanguage = 'English' } = req.body;
 
     if (!lyrics || lyrics.trim().length < 20) {
       return res.status(400).json({
@@ -15,7 +16,12 @@ const analyze = async (req, res) => {
       });
     }
 
-    const { provider, ...analysisData } = await analyzeLyrics(lyrics.trim(), songName, artist);
+    const { provider, ...analysisData } = await analyzeLyrics(
+      lyrics.trim(),
+      songName,
+      artist,
+      explanationLanguage
+    );
 
     res.status(200).json({
       success: true,
@@ -36,7 +42,7 @@ const analyze = async (req, res) => {
   }
 };
 
-// @desc  Save explanation to MongoDB
+// @desc  Save explanation to MongoDB (Multilingual)
 // @route POST /api/lyrics/save
 // @access Protected
 const saveExplanation = async (req, res) => {
@@ -51,6 +57,13 @@ const saveExplanation = async (req, res) => {
       hiddenMeaning,
       overallMessage,
       isPublic,
+      // Multilingual fields
+      detectedLanguage,
+      detectedLanguageCode,
+      translatedLyrics,
+      explanationLanguage,
+      explanationLanguageCode,
+      lineByLineExplanation,
     } = req.body;
 
     if (!lyrics || !songName || !theme || !emotionalTone || !hiddenMeaning || !overallMessage) {
@@ -71,6 +84,14 @@ const saveExplanation = async (req, res) => {
       hiddenMeaning,
       overallMessage,
       isPublic: isPublic !== undefined ? isPublic : true,
+      // Multilingual fields
+      originalLyrics: lyrics,
+      detectedLanguage: detectedLanguage || 'Unknown',
+      detectedLanguageCode: detectedLanguageCode || 'unknown',
+      translatedLyrics: translatedLyrics || null,
+      explanationLanguage: explanationLanguage || 'English',
+      explanationLanguageCode: explanationLanguageCode || 'en',
+      lineByLineExplanation: lineByLineExplanation || [],
     });
 
     res.status(201).json({
@@ -83,6 +104,25 @@ const saveExplanation = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to save explanation.',
+    });
+  }
+};
+
+// @desc  Get supported languages for explanation
+// @route GET /api/lyrics/languages
+// @access Public
+const getLanguages = async (req, res) => {
+  try {
+    const languages = getSupportedLanguages();
+    res.status(200).json({
+      success: true,
+      data: languages,
+    });
+  } catch (error) {
+    console.error('Languages error:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to load languages.',
     });
   }
 };
@@ -168,4 +208,4 @@ const getMyExplanations = async (req, res) => {
   }
 };
 
-module.exports = { analyze, saveExplanation, getFeed, searchExplanations, getMyExplanations };
+module.exports = { analyze, saveExplanation, getFeed, searchExplanations, getMyExplanations, getLanguages };

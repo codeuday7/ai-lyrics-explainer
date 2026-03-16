@@ -7,6 +7,8 @@
   <meta name="description" content="Analyze song lyrics with AI. Get theme, emotional tone, hidden meaning, and verse-by-verse breakdown." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <!-- Tom Select CSS for searchable language selector -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="app-page">
@@ -112,6 +114,17 @@
           </div>
         </div>
 
+        <!-- Explanation Language Selector (NEW: Multilingual) -->
+        <div class="form-group">
+          <label for="explanationLanguage">
+            Explanation Language
+            <span class="label-hint">(Select the language for the AI explanation)</span>
+          </label>
+          <select id="explanationLanguage" class="language-select" placeholder="Select explanation language...">
+            <option value="">Choose a language...</option>
+          </select>
+        </div>
+
         <!-- Action Buttons -->
         <div class="form-actions">
           <button class="btn btn-primary btn-lg" id="analyzeBtn" onclick="analyzeLyrics()" data-tooltip="Use AI to decode lyrics">
@@ -181,6 +194,30 @@
       </div>
 
       <div class="results-grid">
+        <!-- Detected Language (NEW: Multilingual) -->
+        <details class="result-card glass-card" open>
+          <summary class="result-card-header">
+            <span class="result-icon">🌐</span>
+            <span class="result-label">Detected Language</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <p id="detectedLanguageResult">Detecting...</p>
+          </div>
+        </details>
+
+        <!-- Translated Lyrics (NEW: Multilingual) -->
+        <details class="result-card glass-card result-card-wide">
+          <summary class="result-card-header">
+            <span class="result-icon">📝</span>
+            <span class="result-label">Translated Lyrics (English)</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <pre id="translatedLyricsResult" style="white-space: pre-wrap; word-wrap: break-word; font-size: 14px;">Translating...</pre>
+          </div>
+        </details>
+
         <!-- Theme -->
         <details class="result-card glass-card" open>
           <summary class="result-card-header">
@@ -214,6 +251,18 @@
           </summary>
           <div class="result-body">
             <div id="verseBreakdownResult" class="verse-list"></div>
+          </div>
+        </details>
+
+        <!-- Line By Line Explanation (NEW: Multilingual) -->
+        <details class="result-card glass-card result-card-wide">
+          <summary class="result-card-header">
+            <span class="result-icon">✨</span>
+            <span class="result-label">Line-by-Line Explanation</span>
+            <span class="result-chevron">▼</span>
+          </summary>
+          <div class="result-body">
+            <div id="lineByLineResult" class="line-by-line-container"></div>
           </div>
         </details>
 
@@ -279,6 +328,8 @@
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <script src="node_modules/html2canvas/dist/html2canvas.min.js"></script>
+  <!-- Tom Select JS for searchable language selector -->
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/dashboard.js"></script>
 </body>

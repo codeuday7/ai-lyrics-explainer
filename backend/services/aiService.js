@@ -1,39 +1,57 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const axios = require('axios');
+const { detectLanguage, translateText } = require('./languageService');
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
- * Universal Lyrics Prompt
+ * Enhanced Multilingual Lyrics Prompt
  */
-const getPrompt = (lyrics, songName, artist) => {
-  return `You are a professional music analyst and lyric interpreter.
+const getMultilingualPrompt = (lyrics, songName, artist, explanationLanguage = 'English') => {
+  return `You are an expert music analyst and lyric interpreter.
 
-Analyze the following song lyrics deeply.
+The lyrics below may be written in any language.
+
+INSTRUCTIONS:
+Step 1: Detect the language of the lyrics.
+Step 2: Translate the lyrics into English if necessary.
+Step 3: Analyze the lyrics line-by-line for meaning.
+Step 4: Provide the final explanation in ${explanationLanguage}.
 
 Song: ${songName || 'Unknown'}
 Artist: ${artist || 'Unknown'}
 
-Return a VALID JSON object ONLY with no markdown fences, no extra text, just raw JSON with these fields:
+Return a VALID JSON object ONLY with no markdown fences, no extra text, just raw JSON:
 
 {
-  "theme": "central idea of the song (1-2 sentences)",
-  "emotionalTone": "overall emotion conveyed (1 sentence)",
-  "verseBreakdown": ["explanation of verse/section 1", "explanation of verse/section 2", "..."],
-  "hiddenMeaning": "interpret metaphors, symbolism, or deeper message (2-3 sentences)",
-  "overallMessage": "the core message the artist communicates (2-3 sentences)",
-  "culturalContext": "historical era, cultural movement, or real-world events that influenced this song (2 sentences)",
-  "ahaInsight": "one mind-blowing, highly shareable fact or psychological observation about the song that most casual listeners completely miss (1 punchy sentence)"
+  "detected_language": "language name (e.g., 'Telugu', 'Hindi', 'English')",
+  "detected_language_code": "ISO 639-1 code (e.g., 'te', 'hi', 'en')",
+  "translated_lyrics": "English translation if needed (if already English, put original lyrics)",
+  "explanation_language": "${explanationLanguage}",
+  "theme": "central idea of the song (1-2 sentences) IN ${explanationLanguage}",
+  "emotionalTone": "overall emotion conveyed (1 sentence) IN ${explanationLanguage}",
+  "line_by_line_explanation": [
+    {
+      "line": "original lyric line",
+      "explanation": "meaning explanation IN ${explanationLanguage}"
+    }
+  ],
+  "hiddenMeaning": "interpret metaphors, symbolism, deeper message (2-3 sentences) IN ${explanationLanguage}",
+  "overallMessage": "core message the artist communicates (2-3 sentences) IN ${explanationLanguage}",
+  "culturalContext": "historical era, cultural movement, real-world events (2 sentences) IN ${explanationLanguage}",
+  "ahaInsight": "one mind-blowing fact that most casual listeners miss (1 punchy sentence) IN ${explanationLanguage}"
 }
 
 Rules:
 - Be insightful and clear
 - Interpret metaphors and storytelling
 - Do NOT repeat lyrics verbatim
-- Write explanations in simple, engaging English
-- verseBreakdown must be an array of strings, one per major section. You MUST prefix every explanation in the array with a bolded structural label in brackets, like **[OPENING VERSE]**, **[CHORUS]**, or **[BRIDGE]**.
-- Formatting Instruction: Whenever you generate the text for the 'Theme', 'Hidden Meaning', and 'Overall Message' sections, act as an expert copywriter. Identify the 2 to 3 most impactful phrases or core concepts within your response and wrap them in double asterisks to bold them in Markdown (e.g., **cultural pride**). Do not bold entire sentences, only the punchy, high-value keywords. Keep the formatting clean and optimize for human skimming.
+- Write explanations in engaging language
+- line_by_line_explanation: analyze major lyrical sections (not every single line)
+- Prefix each explanation with a bolded label like **[OPENING VERSE]**, **[CHORUS]**, **[BRIDGE]**
+- For theme, hidden meaning, overall message: identify 2-3 impactful phrases and wrap in **bold**
+- Keep formatting clean and optimize for human reading
 
 Lyrics:
 ${lyrics}`;
@@ -71,7 +89,7 @@ const callOpenRouter = async (prompt) => {
     {
       model: 'anthropic/claude-3-haiku',
       messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' } // Ensure JSON structure if supported
+      response_format: { type: 'json_object' }
     },
     {
       headers: {
@@ -90,10 +108,10 @@ const callOpenRouter = async (prompt) => {
 };
 
 /**
- * Main Analysis Orchestrator
+ * Main Analysis Orchestrator (Multilingual)
  */
-const analyzeLyrics = async (lyrics, songName = '', artist = '') => {
-  const prompt = getPrompt(lyrics, songName, artist);
+const analyzeLyrics = async (lyrics, songName = '', artist = '', explanationLanguage = 'English') => {
+  const prompt = getMultilingualPrompt(lyrics, songName, artist, explanationLanguage);
 
   try {
     // 1. Attempt Primary Provider (Gemini)
@@ -113,4 +131,4 @@ const analyzeLyrics = async (lyrics, songName = '', artist = '') => {
   }
 };
 
-module.exports = { analyzeLyrics };
+module.exports = { analyzeLyrics, getMultilingualPrompt };
