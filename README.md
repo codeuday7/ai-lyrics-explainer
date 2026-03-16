@@ -15,7 +15,14 @@
 ## 🌟 Features
 
 - 🤖 **Multi-AI Fallback Architecture** — Primary analysis powered by Google Gemini (1.5 Flash), with seamless automatic fallback to Claude-3-Haiku via OpenRouter ensuring 100% uptime against quota limits.
-- 🎭 **5-Layer Breakdown** — Theme, Emotional Tone, Verse Breakdown, Hidden Meaning, Overall Message
+- 🎭 **5-Layer AI Analysis Breakdown**
+  1. **Theme** — Core narrative and central concept
+  2. **Emotional Tone** — Mood, atmosphere, and emotional progression
+  3. **Verse Breakdown** — Line-by-line analysis of key sections
+  4. **Hidden Meaning** — Metaphors, symbolism, and deeper interpretations
+  5. **Overall Message** — Primary takeaway and artistic intent
+- 🌍 **Multilanguage Support** — Analyze & translate lyrics in 40+ languages (Hindi, Spanish, French, Arabic, Japanese, Korean, Chinese, and more)
+- 🌐 **Automatic Language Detection** — AI-powered language identification
 - 🔐 **JWT Authentication** — Secure signup/login with bcrypt password hashing
 - 💾 **Save Analyses** — Store decoded songs in MongoDB
 - 🌐 **Public Feed** — Discover songs analyzed by the community
@@ -26,9 +33,50 @@
 
 ---
 
-## 🖼 Screenshots
+## 🎭 5-Layer AI Analysis Breakdown
 
-> Add screenshots here after running the project.
+Each analysis is structured in 5 dimensions for comprehensive lyric understanding:
+
+| Layer | Purpose | Example |
+|-------|---------|---------|
+| **Theme** | Identifies the central narrative and core concept | "Explore themes of identity, love, or social commentary" |
+| **Emotional Tone** | Analyzes mood, atmosphere, and emotional evolution | "Melancholic verses transition to triumphant chorus" |
+| **Verse Breakdown** | Line-by-line interpretation of key sections | "Opening verse establishes the protagonist's struggle..." |
+| **Hidden Meaning** | Uncovers metaphors, symbolism, and deeper layers | "The rain symbolizes emotional cleansing and rebirth" |
+| **Overall Message** | Synthesizes the artist's primary intent | "A meditation on resilience and self-acceptance" |
+
+---
+
+## 🌍 Multilanguage Support
+
+Analyze and understand lyrics in **40+ supported languages**:
+
+**Indian Languages:** Hindi, Telugu, Tamil, Kannada, Malayalam  
+**European Languages:** English, Spanish, French, German, Italian, Portuguese, Russian, Polish, Dutch, Swedish, Norwegian, Danish, Finnish, Greek, Czech, Hungarian, Romanian, Bulgarian, Estonian, Irish, Icelandic, Lithuanian, Latvian, Slovak, Slovenian, Afrikaans, Ukrainian  
+**Asian Languages:** Japanese, Korean, Chinese (Simplified & Traditional), Thai, Vietnamese, Indonesian, Arabic  
+**More Languages:** Turkish, and others
+
+### Multilanguage Features:
+- ✅ **Automatic Language Detection** — AI detects your lyrics' language automatically
+- ✅ **Intelligent Translation** — Translate lyrics and explanations to any supported language
+- ✅ **Preserve Meaning** — Maintains poetic intent and cultural nuances during translation
+- ✅ **Multilingual Feed** — Discover analyses from around the world
+
+---
+
+## 📋 Recent Updates
+
+### Version 1.0.0 - March 2026
+- ✨ **New:** Comprehensive 5-layer AI analysis breakdown
+- ✨ **New:** Multilanguage support with 40+ languages
+- ✨ **New:** Intelligent language detection for incoming lyrics
+- ✨ **New:** Translation API integration
+- ✨ **Enhanced:** Multi-AI fallback system (Gemini → Claude-3-Haiku)
+- ✨ **Enhanced:** Public feed with global community analyses
+- ✨ **Enhanced:** Advanced search capabilities (song, artist, language)
+- 🐛 **Fixed:** JWT token validation edge cases
+- 🐛 **Fixed:** CORS configuration for production deployment
+- 📚 **Docs:** Complete API documentation and deployment guides
 
 ---
 
@@ -40,6 +88,7 @@
 | Backend | Node.js, Express.js |
 | Database | MongoDB, Mongoose |
 | AI Pipeline | `gemini-1.5-flash` natively & `anthropic/claude-3-haiku` via OpenRouter (using Axios) |
+| Language Processing | Gemini API for detection & translation |
 | Auth | JWT + bcrypt |
 | Deployment | Render (backend), Vercel (frontend) |
 
@@ -64,7 +113,8 @@ ai-lyrics-explainer/
 │   │   ├── authRoutes.js        # /api/auth/*
 │   │   └── lyricsRoutes.js      # /api/lyrics/*
 │   ├── services/
-│   │   └── aiService.js         # Multi-AI engine orchestrator (Gemini & OpenRouter)
+│   │   ├── aiService.js         # Multi-AI engine orchestrator (Gemini & OpenRouter)
+│   │   └── languageService.js   # Language detection & translation (40+ languages)
 │   ├── server.js                # Express entry point
 │   ├── package.json
 │   └── .env.example
